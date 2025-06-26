@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./server
+    container_name: votacao-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - h2-data:/app/database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/database/database
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_PATH=/h2-console
+    depends_on:
+      - client
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: votacao-client
+    ports:
+      - "4200:80"
+    volumes:
+      - ./client/client:/app
+      - ./client/node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=production
+    restart: always
+
+volumes:
+  h2-data:

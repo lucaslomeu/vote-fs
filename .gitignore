@@ -1,0 +1,19 @@
+# Client
+client/dist/
+client/node_modules/
+client/.angular/
+client/.vscode/
+client/client/
+
+# Server
+server/target/
+server/target/**/*.jar
+server/target/**/*.war
+server/target/**/*.nar
+server/target/**/*.ear
+
+# DB
+server/database.mv.db
+server/database.trace.db
+
+.vscode/
