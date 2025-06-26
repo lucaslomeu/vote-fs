@@ -3,6 +3,7 @@ package br.com.dbserver.api.controller.v1;
 import br.com.dbserver.api.dto.v1.AbrirSessaoDTO;
 import br.com.dbserver.api.dto.v1.ResultadoDTO;
 import br.com.dbserver.api.dto.v1.VotoDTO;
+import br.com.dbserver.api.dto.v1.VotoResponseDTO;
 import br.com.dbserver.api.model.SessaoVotacao;
 import br.com.dbserver.api.model.Voto;
 import br.com.dbserver.api.service.SessaoVotacaoService;
@@ -26,9 +27,10 @@ public class VotacaoControllerV1 {
     }
 
     @PostMapping("/pautas/{pautaId}/votos")
-    public ResponseEntity<Voto> votar(@PathVariable Long pautaId, @Valid @RequestBody VotoDTO votoDTO) {
+    public ResponseEntity<VotoResponseDTO> votar(@PathVariable Long pautaId, @Valid @RequestBody VotoDTO votoDTO) {
         Voto voto = sessaoVotacaoService.votar(pautaId, votoDTO);
-        return new ResponseEntity<>(voto, HttpStatus.CREATED);
+        VotoResponseDTO response = new VotoResponseDTO(voto.getId(), voto.getIdAssociado(), voto.getOpcaoVoto());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/pautas/{pautaId}/resultado")
