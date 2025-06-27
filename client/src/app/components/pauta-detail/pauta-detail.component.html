@@ -1,0 +1,47 @@
+<div *ngIf="error" class="error-message">
+  {{ error }}
+</div>
+
+<div *ngIf="pauta">
+  <h1>{{ pauta.titulo }}</h1>
+  <p>{{ pauta.descricao }}</p>
+
+  <!-- Abrir Sessão de Votação -->
+  <div *ngIf="!resultado">
+    <form [formGroup]="sessaoForm" (ngSubmit)="abrirSessao()">
+      <label for="duracao">Duração em minutos:</label>
+      <input
+        id="duracao"
+        type="number"
+        formControlName="duracaoEmMinutos"
+        min="1"
+      />
+      <button type="submit">Abrir Sessão de Votação</button>
+    </form>
+  </div>
+
+  <!-- Votação -->
+  <div *ngIf="resultado && resultado.statusSessao === 'Aberta'">
+    <form [formGroup]="votacaoForm" (ngSubmit)="votar()">
+      <label for="idAssociado">ID do Associado:</label>
+      <input id="idAssociado" formControlName="idAssociado" />
+
+      <label>
+        <input type="radio" value="SIM" formControlName="opcaoVoto" /> Sim
+      </label>
+      <label>
+        <input type="radio" value="NAO" formControlName="opcaoVoto" /> Não
+      </label>
+      <button type="submit" [disabled]="votacaoForm.invalid">Votar</button>
+    </form>
+  </div>
+
+  <!-- Resultado da Votação -->
+  <div *ngIf="resultado">
+    <h2>Resultado</h2>
+    <p>Status da Sessão: {{ resultado?.statusSessao }}</p>
+    <p>Sim: {{ resultado?.totalSim }}</p>
+    <p>Não: {{ resultado?.totalNao }}</p>
+    <p>Total de votos: {{ resultado?.totalVotos }}</p>
+  </div>
+</div>

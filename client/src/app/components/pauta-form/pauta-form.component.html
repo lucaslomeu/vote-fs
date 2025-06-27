@@ -1,0 +1,27 @@
+<div class="container">
+  <h1>Nova Pauta</h1>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+    <button (click)="clearError()" class="btn-close">×</button>
+  </div>
+
+  <form [formGroup]="pautaForm" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <label for="titulo">Título</label>
+      <input id="titulo" formControlName="titulo" />
+    </div>
+    <div class="form-field">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" formControlName="descricao"></textarea>
+    </div>
+    <button
+      type="submit"
+      [disabled]="pautaForm.invalid || isLoading()"
+      class="btn"
+    >
+      <span *ngIf="isLoading()">Salvando...</span>
+      <span *ngIf="!isLoading()">Salvar</span>
+    </button>
+  </form>
+</div>

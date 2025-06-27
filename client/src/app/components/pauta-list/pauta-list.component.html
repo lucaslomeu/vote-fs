@@ -1,0 +1,26 @@
+<div class="container">
+  <h1>Pautas</h1>
+  <a routerLink="/pautas/nova" class="btn">Nova Pauta</a>
+
+  <div *ngIf="hasError()" class="error-message">
+    {{ errorMessage() }}
+    <button (click)="clearError()" class="btn-close">×</button>
+  </div>
+
+  <div *ngIf="!hasPautas() && !hasError()" class="empty-state">
+    <p>Nenhuma pauta encontrada.</p>
+  </div>
+
+  @if (hasPautas()) {
+  <ul>
+    @for (pauta of pautas(); track pauta.id) {
+    <li>
+      <a [routerLink]="['/pautas', pauta.id]">
+        <h2>{{ pauta.titulo }}</h2>
+        <p>{{ pauta.descricao }}</p>
+      </a>
+    </li>
+    }
+  </ul>
+  }
+</div>
