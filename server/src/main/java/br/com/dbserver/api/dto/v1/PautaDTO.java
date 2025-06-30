@@ -1,6 +1,5 @@
 package br.com.dbserver.api.dto.v1;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -9,6 +8,8 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PautaDTO {
+    private Long id;
     private String titulo;
     private String descricao;
+    private Boolean sessaoAberta;
 }

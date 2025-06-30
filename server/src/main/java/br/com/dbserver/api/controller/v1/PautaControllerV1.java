@@ -25,8 +25,8 @@ public class PautaControllerV1 {
     }
 
     @GetMapping
-    public ResponseEntity<List<Pauta>> listar() {
-        List<Pauta> pautas = pautaService.listar();
+    public ResponseEntity<List<PautaDTO>> listar() {
+        List<PautaDTO> pautas = pautaService.listar();
         return ResponseEntity.ok(pautas);
     }
 

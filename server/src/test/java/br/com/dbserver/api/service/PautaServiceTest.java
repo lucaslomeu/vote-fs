@@ -4,6 +4,7 @@ import br.com.dbserver.api.dto.v1.PautaDTO;
 import br.com.dbserver.api.exception.PautaNotFoundException;
 import br.com.dbserver.api.model.Pauta;
 import br.com.dbserver.api.repository.PautaRepository;
+import br.com.dbserver.api.repository.SessaoVotacaoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +21,8 @@ import static org.mockito.Mockito.*;
 class PautaServiceTest {
     @Mock
     private PautaRepository pautaRepository;
-
+    @Mock
+    private SessaoVotacaoRepository sessaoVotacaoRepository;
     @InjectMocks
     private PautaService pautaService;
 
@@ -31,9 +33,7 @@ class PautaServiceTest {
 
     @Test
     void testCriar() {
-        PautaDTO dto = new PautaDTO();
-        dto.setTitulo("Titulo");
-        dto.setDescricao("Descricao");
+        PautaDTO dto = new PautaDTO(null, "Titulo", "Descricao", false);
         Pauta pauta = new Pauta();
         pauta.setTitulo(dto.getTitulo());
         pauta.setDescricao(dto.getDescricao());
@@ -46,10 +46,19 @@ class PautaServiceTest {
     @Test
     void testListar() {
         Pauta pauta1 = new Pauta();
+        pauta1.setId(1L);
+        pauta1.setTitulo("A");
+        pauta1.setDescricao("a");
         Pauta pauta2 = new Pauta();
+        pauta2.setId(2L);
+        pauta2.setTitulo("B");
+        pauta2.setDescricao("b");
         when(pautaRepository.findAll()).thenReturn(Arrays.asList(pauta1, pauta2));
-        List<Pauta> pautas = pautaService.listar();
+        when(sessaoVotacaoRepository.findByPautaId(anyLong())).thenReturn(Optional.empty());
+        List<PautaDTO> pautas = pautaService.listar();
         assertEquals(2, pautas.size());
+        assertEquals("A", pautas.get(0).getTitulo());
+        assertEquals("B", pautas.get(1).getTitulo());
     }
 
     @Test
