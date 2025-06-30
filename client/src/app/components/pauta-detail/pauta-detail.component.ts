@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { PautaService } from '../../shared/services/pauta.service';
 import { VotacaoService } from '../../shared/services/votacao.service';
 import { Pauta } from '../../shared/interfaces/pauta';
@@ -15,34 +20,30 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, ReactiveFormsModule],
 })
 export class PautaDetailComponent implements OnInit {
-  pauta: Pauta | null = null;
-  resultado: Resultado | null = null;
-  error: string | null = null;
+  private route = inject(ActivatedRoute);
+  private pautaService = inject(PautaService);
+  private votacaoService = inject(VotacaoService);
+  private fb = inject(FormBuilder);
+
+  pauta = signal<Pauta | null>(null);
+  resultado = signal<Resultado | null>(null);
+  errorMessage = signal<string | null>(null);
+  isLoading = signal(false);
   pautaId: number = 0;
 
-  sessaoForm: FormGroup;
-  votacaoForm: FormGroup;
-
-  constructor(
-    private route: ActivatedRoute,
-    private pautaService: PautaService,
-    private votacaoService: VotacaoService,
-    private fb: FormBuilder
-  ) {
-    this.sessaoForm = this.fb.group({
-      duracaoEmMinutos: [1, [Validators.required, Validators.min(1)]],
-    });
-    this.votacaoForm = this.fb.group({
-      idAssociado: ['', Validators.required],
-      opcaoVoto: ['', Validators.required],
-    });
-  }
+  sessaoForm: FormGroup = this.fb.group({
+    duracaoEmMinutos: [1, [Validators.required, Validators.min(1)]],
+  });
+  votacaoForm: FormGroup = this.fb.group({
+    idAssociado: ['', Validators.required],
+    opcaoVoto: ['', Validators.required],
+  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     this.pautaId = Number(idParam);
     if (!this.pautaId) {
-      this.error = 'ID de pauta inválido.';
+      this.errorMessage.set('ID de pauta inválido.');
       return;
     }
     this.carregarPauta();
@@ -51,43 +52,74 @@ export class PautaDetailComponent implements OnInit {
 
   carregarPauta() {
     this.pautaService.buscarPautaPorId(this.pautaId).subscribe({
-      next: (pauta) => (this.pauta = pauta),
-      error: () => (this.error = 'Erro ao carregar pauta'),
+      next: (pauta) => this.pauta.set(pauta),
+      error: () => this.errorMessage.set('Erro ao carregar pauta'),
     });
   }
 
   carregarResultado() {
-    this.votacaoService.obterResultado(this.pautaId).subscribe({
-      next: (resultado) => (this.resultado = resultado),
-      error: () => (this.error = 'Erro ao carregar resultado'),
-    });
+    if (this.pauta()) {
+      this.votacaoService.obterResultado(this.pautaId).subscribe({
+        next: (resultado) => this.resultado.set(resultado),
+        error: (err) => {
+          console.warn('err', err);
+          if (err?.status !== 404) {
+            this.errorMessage.set('Erro ao carregar resultado');
+          } else {
+            this.resultado.set(null);
+          }
+        },
+      });
+    }
   }
 
   abrirSessao() {
     const duracao = this.sessaoForm.value.duracaoEmMinutos;
-    this.error = null;
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
     this.votacaoService
       .abrirSessao({ pautaId: this.pautaId, duracaoEmMinutos: duracao })
       .subscribe({
-        next: () => this.carregarResultado(),
-        error: (err) =>
-        (this.error =
-          err?.error?.message || 'Erro ao abrir sessão de votação'),
+        next: () => {
+          this.carregarResultado();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(
+            err?.error?.message || 'Erro ao abrir sessão de votação'
+          );
+          this.isLoading.set(false);
+        },
       });
   }
 
   votar() {
+    if (
+      !this.votacaoForm.value.idAssociado ||
+      this.votacaoForm.value.idAssociado.trim() === ''
+    ) {
+      this.errorMessage.set(
+        'Por favor, preencha o ID do associado para votar.'
+      );
+      return;
+    }
     if (this.votacaoForm.invalid) return;
-    this.error = null;
-    this.votacaoService
-      .votar(this.pautaId, this.votacaoForm.value)
-      .subscribe({
-        next: () => {
-          this.carregarResultado();
-          this.votacaoForm.reset();
-        },
-        error: (err) =>
-          (this.error = err?.error?.message || 'Erro ao votar'),
-      });
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+    this.votacaoService.votar(this.pautaId, this.votacaoForm.value).subscribe({
+      next: () => {
+        this.carregarResultado();
+        this.votacaoForm.reset();
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.errorMessage.set(err?.error?.message || 'Erro ao votar');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  clearError(): void {
+    this.errorMessage.set(null);
   }
 }

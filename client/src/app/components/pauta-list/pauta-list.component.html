@@ -1,6 +1,8 @@
 <div class="container">
-  <h1>Pautas</h1>
-  <a routerLink="/pautas/nova" class="btn">Nova Pauta</a>
+  <div class="header">
+    <h1>Pautas</h1>
+    <a routerLink="/pautas/nova" class="btn">Nova Pauta</a>
+  </div>
 
   <div *ngIf="hasError()" class="error-message">
     {{ errorMessage() }}
@@ -12,11 +14,22 @@
   </div>
 
   @if (hasPautas()) {
-  <ul>
+  <ul class="pauta-list">
     @for (pauta of pautas(); track pauta.id) {
     <li>
       <a [routerLink]="['/pautas', pauta.id]">
-        <h2>{{ pauta.titulo }}</h2>
+        <div class="pauta-card-header">
+          <h2>{{ pauta.titulo }}</h2>
+          <span
+            class="status"
+            [ngClass]="{
+              aberta: pauta.sessaoAberta,
+              fechada: !pauta.sessaoAberta
+            }"
+          >
+            {{ pauta.sessaoAberta ? "Aberta" : "Fechada" }}
+          </span>
+        </div>
         <p>{{ pauta.descricao }}</p>
       </a>
     </li>

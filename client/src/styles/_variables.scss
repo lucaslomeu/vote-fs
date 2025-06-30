@@ -1,0 +1,19 @@
+:root {
+  --color-primary: #2d3748;
+  --color-secondary: #4fd1c5;
+  --color-bg: #f7fafc;
+  --color-surface: #fff;
+  --color-text: #222;
+  --color-muted: #a0aec0;
+  --border-radius: 8px;
+  --spacing: 1.5rem;
+}
+
+$color-primary: var(--color-primary);
+$color-secondary: var(--color-secondary);
+$color-bg: var(--color-bg);
+$color-surface: var(--color-surface);
+$color-text: var(--color-text);
+$color-muted: var(--color-muted);
+$border-radius: var(--border-radius);
+$spacing: var(--spacing);

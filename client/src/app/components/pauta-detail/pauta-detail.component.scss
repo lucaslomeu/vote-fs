@@ -1,0 +1,256 @@
+@use "../../../styles/variables" as vars;
+
+.pauta-detail-container {
+  background: vars.$color-surface;
+  border-radius: vars.$border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  padding: vars.$spacing;
+  margin-top: vars.$spacing;
+  max-width: 600px;
+  margin-inline: auto;
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+    max-width: 100%;
+  }
+}
+
+.resultado-container {
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: vars.$color-primary;
+    margin-bottom: 0;
+  }
+
+  p {
+    color: vars.$color-muted;
+    margin: 4px 10px 16px 0px;
+  }
+}
+
+.pauta-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: vars.$color-primary;
+  margin-bottom: 0.5rem;
+
+  @media (max-width: 600px) {
+    font-size: 1.5rem;
+  }
+}
+
+.pauta-desc {
+  color: vars.$color-muted;
+  margin-bottom: vars.$spacing;
+
+  @media (max-width: 600px) {
+    font-size: 1rem;
+  }
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: vars.$spacing;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.dashboard-card {
+  flex: 1;
+  background: vars.$color-bg;
+  border-radius: vars.$border-radius;
+  padding: 1.2rem 0.5rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .card-label {
+    font-size: 0.9rem;
+    color: vars.$color-muted;
+    margin-bottom: 0.3rem;
+  }
+
+  .card-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &.sim {
+    border-bottom: 3px solid #16a34a;
+  }
+
+  &.nao {
+    border-bottom: 3px solid #dc2626;
+  }
+
+  &.total {
+    border-bottom: 3px solid vars.$color-secondary;
+  }
+}
+
+/* Formulário - Abrir Sessão */
+.abrir-sessao-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: vars.$spacing;
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+
+    label {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+      color: vars.$color-primary;
+    }
+
+    input[type="number"] {
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border: 1px solid vars.$color-muted;
+      border-radius: vars.$border-radius;
+      width: 100%;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Botão padrão */
+.btn {
+  background-color: vars.$color-secondary;
+  color: vars.$color-surface;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: vars.$border-radius;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
+}
+
+/* Votação */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+
+    label {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+      color: vars.$color-primary;
+    }
+
+    input {
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border: 1px solid vars.$color-muted;
+      border-radius: vars.$border-radius;
+      width: 100%;
+    }
+  }
+
+  .votos-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .voto-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 0.4rem 0.8rem;
+      border-radius: vars.$border-radius;
+      transition: background 0.2s;
+      max-width: 100%;
+
+      input[type="radio"] {
+        margin: 0;
+        width: 20px;
+      }
+
+      &.sim {
+        color: #16a34a;
+      }
+
+      &.nao {
+        color: #dc2626;
+      }
+
+      .voto-text {
+        display: flex;
+        flex-direction: column;
+
+        .voto-title {
+          font-weight: 700;
+          margin-left: 0;
+        }
+
+        .voto-desc {
+          font-size: 0.85rem;
+          color: vars.$color-muted;
+          margin-top: -0.2rem;
+        }
+      }
+
+      &:hover {
+        background: vars.$color-bg;
+      }
+    }
+  }
+
+  button[type="submit"] {
+    align-self: flex-start;
+
+    @media (max-width: 600px) {
+      align-self: stretch;
+    }
+  }
+}
+
+/* Erros */
+.error-message {
+  color: red;
+  font-weight: 500;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  background-color: #ffe0e0;
+  border-radius: vars.$border-radius;
+
+  @media (max-width: 600px) {
+    font-size: 1rem;
+  }
+}

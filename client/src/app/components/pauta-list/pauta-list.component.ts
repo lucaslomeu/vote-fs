@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { PautaService } from '../../shared/services/pauta.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
+import { catchError, of, map } from 'rxjs';
+import {
+  PautaListItem,
+  Resultado,
+} from '../../shared/interfaces/pauta-list-item';
 
 @Component({
   selector: 'app-pauta-list',
@@ -20,12 +24,23 @@ export class PautaListComponent {
 
   pautas = toSignal(
     this.pautaService.listarPautas().pipe(
+      map((pautas) =>
+        pautas.map((pauta: any) => {
+          console.warn('pauta, pauta', pauta);
+          const resultado: Resultado | undefined = pauta.resultado;
+          return {
+            ...pauta,
+            aberta: resultado?.statusSessao === 'Aberta',
+            totalVotos: resultado?.totalVotos ?? 0,
+          } as PautaListItem;
+        })
+      ),
       catchError((error) => {
         this.errorMessage.set('Erro ao carregar pautas');
         return of([]);
       })
     ),
-    { initialValue: [] }
+    { initialValue: [] as PautaListItem[] }
   );
 
   hasPautas = computed(() => this.pautas().length > 0);
